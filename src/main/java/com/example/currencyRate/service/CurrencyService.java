@@ -1,40 +1,37 @@
 package com.example.currencyRate.service;
 
+import com.example.currencyRate.dto.NbpResponse;
 import com.example.currencyRate.model.CurrencyRate;
 import com.example.currencyRate.repository.CurrencyRateRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
+@RequiredArgsConstructor
 @Service
 public class CurrencyService {
-
     private final CurrencyRateRepository repository;
-    private final RestTemplate restTemplate = new RestTemplate();
-
-    public CurrencyService(CurrencyRateRepository repository) {
-        this.repository = repository;
-    }
+    private final WebClient webClient;
 
     public void fetchAndSaveRates() {
         List<String> currencies = List.of("EUR", "USD", "CHF", "GBP");
 
         for (String currency : currencies) {
             String url = "https://api.nbp.pl/api/exchangerates/rates/a/" + currency + "/?format=json";
-            Map<String, Object> response = restTemplate.getForObject(url, Map.class);
-            if (response != null && response.containsKey("rates")) {
-                List<Map<String, Object>> rates = (List<Map<String, Object>>) response.get("rates");
-                if (!rates.isEmpty()) {
-                    Double rate = ((Number) rates.get(0).get("mid")).doubleValue();
-                    String dateStr = (String) rates.get(0).get("effectiveDate");
-                    CurrencyRate currencyRate = new CurrencyRate(currency, rate, LocalDate.parse(dateStr));
-                    repository.save(currencyRate);
-                }
+
+            NbpResponse response = webClient.get()
+                    .uri(url)
+                    .retrieve()
+                    .bodyToMono(NbpResponse.class)
+                    .block();
+
+            if (response != null && response.getRates() != null && !response.getRates().isEmpty()) {
+                NbpResponse.Rate rate = response.getRates().getFirst();
+                CurrencyRate currencyRate = new CurrencyRate(currency, rate.getMid(), rate.getEffectiveDate());
+                repository.save(currencyRate);
             }
         }
     }

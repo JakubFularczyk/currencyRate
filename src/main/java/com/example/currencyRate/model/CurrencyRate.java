@@ -1,20 +1,14 @@
 package com.example.currencyRate.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.NonNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Getter
-@Entity
+@Data
 @NoArgsConstructor
 @RequiredArgsConstructor
+@Entity
 public class CurrencyRate {
 
     @Id
@@ -22,11 +16,14 @@ public class CurrencyRate {
     private Long id;
 
     @NonNull
+    @Column(nullable = false)
     private String currency;
 
     @NonNull
+    @Column(nullable = false)
     private Double rate;
 
     @NonNull
+    @Column(nullable = false)
     private LocalDate date;
 }
