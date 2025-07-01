@@ -1,6 +1,7 @@
 package com.example.currencyRate.service;
 
 import com.example.currencyRate.dto.NbpResponse;
+import com.example.currencyRate.model.CurrencyCode;
 import com.example.currencyRate.model.CurrencyRate;
 import com.example.currencyRate.repository.CurrencyRateRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -17,9 +17,9 @@ public class CurrencyService {
     private final WebClient webClient;
 
     public void fetchAndSaveRates() {
-        List<String> currencies = List.of("EUR", "USD", "CHF", "GBP");
 
-        for (String currency : currencies) {
+        for (CurrencyCode currency : CurrencyCode.values()) {
+            String code = currency.name();
             String url = "https://api.nbp.pl/api/exchangerates/rates/a/" + currency + "/?format=json";
 
             NbpResponse response = webClient.get()
@@ -30,7 +30,7 @@ public class CurrencyService {
 
             if (response != null && response.getRates() != null && !response.getRates().isEmpty()) {
                 NbpResponse.Rate rate = response.getRates().getFirst();
-                CurrencyRate currencyRate = new CurrencyRate(currency, rate.getMid(), rate.getEffectiveDate());
+                CurrencyRate currencyRate = new CurrencyRate(code, rate.getMid(), rate.getEffectiveDate());
                 repository.save(currencyRate);
             }
         }

@@ -7,7 +7,6 @@ import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
 @Entity
 public class CurrencyRate {
 
@@ -15,15 +14,20 @@ public class CurrencyRate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NonNull
     @Column(nullable = false)
     private String currency;
 
-    @NonNull
     @Column(nullable = false)
     private Double rate;
 
-    @NonNull
     @Column(nullable = false)
     private LocalDate date;
+
+    public CurrencyRate(String currency, Double rate, LocalDate date) {
+        this.currency = currency;
+        this.rate = rate;
+        this.date = date;
+    }
+
+
 }
