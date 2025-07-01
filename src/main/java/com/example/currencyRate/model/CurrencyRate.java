@@ -4,36 +4,29 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.NonNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 
+@Getter
 @Entity
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class CurrencyRate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NonNull
     private String currency;
+
+    @NonNull
     private Double rate;
+
+    @NonNull
     private LocalDate date;
-
-
-    public CurrencyRate() {}
-
-    public CurrencyRate(String currency, Double rate, LocalDate date) {
-        this.currency = currency;
-        this.rate = rate;
-        this.date = date;
-    }
-
-    public Long getId() { return id; }
-    public String getCurrency() { return currency; }
-    public void setCurrency(String currency) { this.currency = currency; }
-
-    public Double getRate() { return rate; }
-    public void setRate(Double rate) { this.rate = rate; }
-
-    public LocalDate getDate() { return date; }
-    public void setDate(LocalDate date) { this.date = date; }
 }

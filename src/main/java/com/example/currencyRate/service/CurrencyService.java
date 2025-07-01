@@ -22,7 +22,7 @@ public class CurrencyService {
     }
 
     public void fetchAndSaveRates() {
-        List<String> currencies = List.of("eur", "usd", "chf", "gbp");
+        List<String> currencies = List.of("EUR", "USD", "CHF", "GBP");
 
         for (String currency : currencies) {
             String url = "https://api.nbp.pl/api/exchangerates/rates/a/" + currency + "/?format=json";
@@ -32,7 +32,6 @@ public class CurrencyService {
                 if (!rates.isEmpty()) {
                     Double rate = ((Number) rates.get(0).get("mid")).doubleValue();
                     String dateStr = (String) rates.get(0).get("effectiveDate");
-
                     CurrencyRate currencyRate = new CurrencyRate(currency, rate, LocalDate.parse(dateStr));
                     repository.save(currencyRate);
                 }
