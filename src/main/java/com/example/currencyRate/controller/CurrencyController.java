@@ -1,5 +1,6 @@
 package com.example.currencyRate.controller;
 
+import com.example.currencyRate.dto.ExchangeRequest;
 import com.example.currencyRate.service.CurrencyService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,10 +19,7 @@ public class CurrencyController {
 
     @PostMapping
     public String convert(@RequestBody ExchangeRequest request) {
-        double result = currencyService.convertToPln(request.currency(), request.amount());
-        return request.amount() + " " + request.currency().toUpperCase() + " = " + result + " PLN";
+        return currencyService.convertToPlnFormatted(request.currency(), request.amount());
     }
-
-    public record ExchangeRequest(String currency, double amount) {}
 }
 

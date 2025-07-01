@@ -39,9 +39,12 @@ public class CurrencyService {
         }
     }
 
-    public double convertToPln(String currency, double amount) {
+    public String convertToPlnFormatted(String currency, double amount) {
         CurrencyRate rate = repository.findTopByCurrencyOrderByDateDesc(currency.toUpperCase())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Currency not found in DB: " + currency));
-        return amount * rate.getRate();
+
+        double result = amount * rate.getRate();
+        return String.format("%.2f %s = %.2f PLN", amount, currency.toUpperCase(), result);
     }
+
 }
