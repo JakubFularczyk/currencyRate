@@ -4,19 +4,25 @@ import com.example.currencyRate.dto.NbpResponse;
 import com.example.currencyRate.model.CurrencyCode;
 import com.example.currencyRate.model.CurrencyRate;
 import com.example.currencyRate.repository.CurrencyRateRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class CurrencyService {
     private final CurrencyRateRepository repository;
     private final WebClient webClient;
 
     public void fetchAndSaveRates() {
+
+        repository.deleteByDateBefore(LocalDate.now());
 
         for (CurrencyCode currency : CurrencyCode.values()) {
             String code = currency.name();

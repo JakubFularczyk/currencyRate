@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface CurrencyRateRepository extends JpaRepository<CurrencyRate, Long> {
     Optional<CurrencyRate> findTopByCurrencyOrderByDateDesc(String currency);
+    void deleteByDateBefore(java.time.LocalDate date);
+
 }
