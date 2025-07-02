@@ -6,6 +6,7 @@ import com.example.currencyRate.model.CurrencyRate;
 import com.example.currencyRate.repository.CurrencyRateRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -19,14 +20,15 @@ import java.time.LocalDate;
 public class CurrencyService {
     private final CurrencyRateRepository repository;
     private final WebClient webClient;
+    @Value("${NBP_URL}")
+    private String nbpUrl;
 
     public void fetchAndSaveRates() {
 
         repository.deleteByDateBefore(LocalDate.now());
-
         for (CurrencyCode currency : CurrencyCode.values()) {
             String code = currency.name();
-            String url = "https://api.nbp.pl/api/exchangerates/rates/a/" + currency + "/?format=json";
+            String url = nbpUrl + currency + "/?format=json";
 
             NbpResponse response = webClient.get()
                     .uri(url)
